@@ -1,0 +1,610 @@
+# PLP Software Engineering Assignment: Python Project Setup, Git, and GitHub Workflow
+
+**Student:** Basoma Patrick\
+**Program:** Power Learn Project (PLP) --- Software Engineering\
+**Project folder:** `python_lab`\
+**GitHub repository:** `python-lab`
+
+This assignment demonstrates how to create a Python project using the
+command-line interface (CLI), track changes with Git, write and test
+Python functions, and publish a project on GitHub using branches and
+pull requests.
+
+## Part A --- Project Setup Using the CLI
+
+### 1. Create the project directory
+
+Open your terminal. On Linux, macOS, or Git Bash on Windows, run the
+following commands one at a time.
+
+``` bash
+cd ~
+mkdir python_lab
+cd python_lab
+mkdir src tests docs
+touch src/main.py src/utils.py src/config.py
+echo "My Python Lab Project" > docs/README.md
+```
+
+### 2. Display the directory tree
+
+Run this command while you are inside `python_lab`:
+
+``` bash
+find . -print
+```
+
+Expected output:
+
+``` text
+.
+./src
+./src/main.py
+./src/utils.py
+./src/config.py
+./tests
+./docs
+./docs/README.md
+```
+
+The order may differ depending on your operating system. The important
+thing is that all folders and files are present in the correct
+locations.
+
+**Windows Command Prompt alternative:** Use `tree /F` to display the
+folders and files recursively.
+
+### 3. Explanation of the commands
+
+The `cd ~` command moves to the home directory. The `mkdir python_lab`
+command creates the project folder, and `cd python_lab` moves into it.
+The command `mkdir src tests docs` creates three subdirectories. The
+`touch` command creates the three empty Python files inside `src`.
+Finally, `echo "My Python Lab Project" > docs/README.md` writes the
+specified text into the README file, replacing its contents if the file
+already exists. The `find . -print` command displays the directory
+structure recursively.
+
+### 4. Why separate `src`, `tests`, and `docs`?
+
+Separating a project into `src`, `tests`, and `docs` makes the code
+easier to organize and maintain. The `src` directory contains the
+application code, the `tests` directory contains tests that check
+whether the code works correctly, and the `docs` directory contains
+project documentation. This structure makes it easier for developers to
+find files, fix errors, test new features, and collaborate with others,
+even on small projects.
+
+**Screenshot requirement:** Run `find . -print` and take a screenshot of
+the actual terminal output. Include that screenshot in your assignment
+submission.
+
+------------------------------------------------------------------------
+
+## Part B --- Git Initialization and First Commit
+
+### 1. Initialize Git
+
+Make sure you are inside the `python_lab` directory.
+
+``` bash
+git init -b main
+```
+
+This initializes a new Git repository and sets the initial branch name
+to `main`.
+
+If your installed Git version does not support `-b main`, use:
+
+``` bash
+git init
+git branch -M main
+```
+
+### 2. Create the `.gitignore` file
+
+Run:
+
+``` bash
+cat > .gitignore << 'EOF'
+__pycache__/
+*.pyc
+.env
+EOF
+```
+
+The `.gitignore` file tells Git which files or directories to ignore
+when detecting untracked files.
+
+-   `__pycache__/` ignores Python cache directories.
+-   `*.pyc` ignores compiled Python bytecode files.
+-   `.env` ignores the environment configuration file, which may contain
+    passwords, API keys, or other sensitive settings.
+
+### 3. Stage and check the files
+
+``` bash
+git add .
+git status
+```
+
+The `git add .` command stages eligible files in the current project.
+The `git status` command shows which files are staged and ready to
+commit.
+
+You should see files such as `.gitignore`, `src/main.py`,
+`src/utils.py`, `src/config.py`, and `docs/README.md` listed as new
+files to be committed. Empty directories such as `tests` will not appear
+because Git does not track empty directories.
+
+### 4. Make your first commit
+
+``` bash
+git commit -m "Initial project structure and configuration"
+```
+
+A commit records a snapshot of the staged project files along with a
+message describing the change.
+
+If Git asks you to configure your identity, use your own Git name and
+email:
+
+``` bash
+git config --global user.name "Your Name"
+git config --global user.email "your-email@example.com"
+```
+
+Replace the example values with your own Git identity, then retry the
+commit.
+
+### 5. Display commit history
+
+``` bash
+git log --oneline
+```
+
+Example output after a successful commit:
+
+``` text
+a1b2c3d Initial project structure and configuration
+```
+
+The characters shown are only an example; your actual commit ID will be
+different.
+
+### 6. Worksheet explanation
+
+The `.gitignore` file prevents Git from tracking specified files that
+should not normally be included in version control. The `__pycache__/`
+and `*.pyc` patterns exclude generated Python cache files that can be
+recreated automatically. The `.env` pattern helps prevent local
+configuration files and potentially sensitive credentials from being
+committed to a public repository. These patterns do not remove files
+that Git is already tracking, so sensitive files must be handled
+separately if they have previously been committed.
+
+Git commit history shows the sequence of saved changes in a project. It
+includes commit identifiers, author information, dates, and commit
+messages. Developers can use this history to understand how a project
+has developed, identify when a change was introduced, and review earlier
+versions of their work.
+
+**Screenshot requirement:** Take a screenshot showing the output of
+`git log --oneline` after your first commit.
+
+------------------------------------------------------------------------
+
+## Part C --- Writing and Committing Python Code
+
+In this part, we will write reusable Python functions, import them into
+the main program, test the program with three different inputs, and
+commit the working code.
+
+### 1. Write the code in `src/utils.py`
+
+``` python
+def square(n):
+    """Return the square of a number."""
+    return n ** 2
+
+
+def is_even(n):
+    """Return True if the number is even, otherwise False."""
+    return n % 2 == 0
+
+
+def celsius_to_fahrenheit(c):
+    """Convert Celsius to Fahrenheit."""
+    return (c * 9 / 5) + 32
+```
+
+**Explanation:**
+
+-   `square(n)` multiplies a number by itself. For example, `square(4)`
+    returns `16`.
+-   `is_even(n)` uses the modulo operator `%` to check the remainder
+    after division by 2. For example, `is_even(6)` returns `True`.
+-   `celsius_to_fahrenheit(c)` converts a Celsius temperature to
+    Fahrenheit using the required formula.
+
+### 2. Write the code in `src/main.py`
+
+``` python
+from utils import square, is_even, celsius_to_fahrenheit
+
+
+def main():
+    number = float(input("Enter a number: "))
+
+    print("Square:", square(number))
+
+    if is_even(number):
+        print("The number is even.")
+    else:
+        print("The number is odd.")
+
+    fahrenheit = celsius_to_fahrenheit(number)
+    print("Fahrenheit equivalent:", fahrenheit)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+**Important:** The code uses `float()` so that users can enter decimal
+numbers for temperature conversion. The parity check is intended for
+whole numbers, so test with integers as requested.
+
+### 3. Run the program
+
+From the project root, run:
+
+``` bash
+python src/main.py
+```
+
+If your system uses `python3`, run:
+
+``` bash
+python3 src/main.py
+```
+
+Python adds the directory containing the executed script to its module
+search path, so `main.py` can import `utils.py` from the same `src`
+directory.
+
+### 4. Test with three different inputs
+
+Run the program separately for each input.
+
+#### Test 1 --- Input: 4
+
+``` text
+Enter a number: 4
+Square: 16.0
+The number is even.
+Fahrenheit equivalent: 39.2
+```
+
+#### Test 2 --- Input: 5
+
+``` text
+Enter a number: 5
+Square: 25.0
+The number is odd.
+Fahrenheit equivalent: 41.0
+```
+
+#### Test 3 --- Input: 0
+
+``` text
+Enter a number: 0
+Square: 0.0
+The number is even.
+Fahrenheit equivalent: 32.0
+```
+
+These are expected results. Run the program yourself and capture your
+actual terminal output as evidence that the tests passed.
+
+### 5. How Python imports connect the two files
+
+The statement `from utils import square, is_even, celsius_to_fahrenheit`
+imports the three functions defined in `utils.py` into `main.py`. This
+allows the main program to call the functions without rewriting their
+logic. Keeping functions in a separate module makes code reusable,
+easier to test, and simpler to maintain.
+
+The `if __name__ == "__main__":` condition ensures that `main()` runs
+when `main.py` is executed directly, but not automatically when the file
+is imported by another Python module.
+
+### 6. Stage and commit your code
+
+From the project root, run:
+
+``` bash
+git add src/main.py src/utils.py
+git status
+git commit -m "Add number utilities and temperature conversion"
+```
+
+Check the commit history:
+
+``` bash
+git log --oneline
+```
+
+Example:
+
+``` text
+b2c3d4e Add number utilities and temperature conversion
+a1b2c3d Initial project structure and configuration
+```
+
+Your commit IDs will differ. If you created or changed any other files,
+stage those separately and commit them when appropriate.
+
+------------------------------------------------------------------------
+
+## Part D --- Publishing to GitHub and Branch Workflow
+
+In this part, you will publish your project to GitHub, create a feature
+branch, add a greeting function, and open a pull request.
+
+### 1. Prepare the required filenames
+
+There is a small inconsistency in the assignment: Part A requests
+`docs/README.md`, while the required GitHub filenames list includes
+`README.txt`.
+
+To satisfy both instructions, keep `docs/README.md` and create a
+root-level `README.txt`:
+
+``` bash
+echo "Python Lab Project" > README.txt
+git add README.txt
+git commit -m "Add project README text file"
+```
+
+Your project will now contain both README files.
+
+### 2. Create a public GitHub repository
+
+1.  Open [GitHub --- Create a new repository](https://github.com/new).
+2.  Enter the repository name `python-lab`.
+3.  Select **Public**.
+4.  Leave the README, `.gitignore`, and license initialization options
+    unchecked.
+5.  Click **Create repository**.
+
+The repository should be named `python-lab`, even though your local
+directory is named `python_lab`.
+
+### 3. Connect your local project to GitHub
+
+Copy your repository URL from GitHub. It should look like this:
+
+`https://github.com/YOUR-USERNAME/python-lab.git`
+
+Replace `YOUR-USERNAME` with your actual GitHub username.
+
+Run these commands inside your local `python_lab` directory:
+
+``` bash
+git remote add origin https://github.com/YOUR-USERNAME/python-lab.git
+git branch -M main
+git push -u origin main
+```
+
+If you have already configured a remote named `origin`, use
+`git remote set-url origin` followed by your repository URL instead of
+adding the remote again.
+
+The commands connect your local repository to GitHub, ensure your main
+branch is named `main`, and upload your commits.
+
+### 4. Verify your repository
+
+Open your GitHub repository page and refresh it.
+
+You should see files including:
+
+-   `.gitignore`
+-   `README.txt`
+-   `src/main.py`
+-   `src/utils.py`
+-   `src/config.py`
+-   `docs/README.md`
+
+The `tests` folder will not appear until it contains a tracked file. You
+can add a test file later if required, but the assignment does not
+require you to write one.
+
+Click the commit history link, usually labelled with the number of
+commits, to verify that your commits have been published.
+
+**Screenshot requirement:** Capture the GitHub repository page showing
+the repository name and files. Also capture the commit history.
+
+### 5. Create the feature branch
+
+Return to your terminal and run:
+
+``` bash
+git switch -c feature/add-greeting
+```
+
+This creates a new branch named `feature/add-greeting` and switches to
+it. The branch allows you to develop a new feature without changing
+`main` directly.
+
+### 6. Add the `greet(name)` function
+
+Update `src/utils.py` to include the new function:
+
+``` python
+def square(n):
+    """Return the square of a number."""
+    return n ** 2
+
+
+def is_even(n):
+    """Return True if the number is even, otherwise False."""
+    return n % 2 == 0
+
+
+def celsius_to_fahrenheit(c):
+    """Convert Celsius to Fahrenheit."""
+    return (c * 9 / 5) + 32
+
+
+def greet(name):
+    """Return a personalized greeting."""
+    return f"Hello, {name}! Welcome to Python Lab."
+```
+
+### 7. Update `src/main.py`
+
+Replace the previous code with this version, which imports and uses the
+greeting function:
+
+``` python
+from utils import (
+    square,
+    is_even,
+    celsius_to_fahrenheit,
+    greet,
+)
+
+
+def main():
+    name = input("Enter your name: ")
+    print(greet(name))
+
+    number = float(input("Enter a whole number: "))
+
+    print("Square:", square(number))
+
+    if is_even(number):
+        print("The number is even.")
+    else:
+        print("The number is odd.")
+
+    fahrenheit = celsius_to_fahrenheit(number)
+    print("Fahrenheit equivalent:", fahrenheit)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+Run the program:
+
+``` bash
+python src/main.py
+```
+
+Example output:
+
+``` text
+Enter your name: Patrick
+Hello, Patrick! Welcome to Python Lab.
+Enter a whole number: 6
+Square: 36.0
+The number is even.
+Fahrenheit equivalent: 42.8
+```
+
+### 8. Commit and push the feature branch
+
+After testing the new greeting feature, run:
+
+``` bash
+git add src/main.py src/utils.py
+git status
+git commit -m "Add personalized greeting feature"
+git push -u origin feature/add-greeting
+```
+
+The commit saves the feature on the current branch, and the push uploads
+that branch to GitHub.
+
+You can confirm your current branch by running:
+
+``` bash
+git branch
+```
+
+The output should show an asterisk beside `feature/add-greeting`.
+
+### 9. Open a pull request
+
+1.  Open your `python-lab` repository on GitHub.
+2.  Select the **Pull requests** tab.
+3.  Click **New pull request**.
+4.  Set the base branch to `main`.
+5.  Set the compare branch to `feature/add-greeting`.
+6.  Click **Create pull request**.
+
+Use the following details:
+
+-   **Title:** Add personalized greeting feature
+-   **Description:** This pull request adds a `greet(name)` function to
+    `utils.py` and updates `main.py` to display a personalized greeting
+    before processing the number. The existing number utility functions
+    remain available.
+
+Submit the pull request. You do not need to merge it unless your
+instructor specifically asks you to do so.
+
+**Screenshot requirement:** Capture the open pull request page showing
+the title and the branches `feature/add-greeting` and `main`.
+
+------------------------------------------------------------------------
+
+## Final Submission Checklist
+
+### Part A --- Project setup
+
+-   [ ] Created `python_lab` in the home directory.
+-   [ ] Created `src`, `tests`, and `docs` directories.
+-   [ ] Created `main.py`, `utils.py`, and `config.py`.
+-   [ ] Created `docs/README.md` using output redirection.
+-   [ ] Captured the recursive directory listing screenshot.
+-   [ ] Wrote both worksheet explanations.
+
+### Part B --- Git
+
+-   [ ] Initialized Git and created `.gitignore`.
+-   [ ] Staged files and checked `git status`.
+-   [ ] Made the initial commit.
+-   [ ] Captured the commit history screenshot.
+
+### Part C --- Python code
+
+-   [ ] Implemented all three utility functions.
+-   [ ] Updated `main.py` to import and use the functions.
+-   [ ] Tested at least three input values.
+-   [ ] Committed the working Python code.
+-   [ ] Included code, explanations, and test output in the worksheet.
+
+### Part D --- GitHub
+
+-   [ ] Created the public `python-lab` repository.
+-   [ ] Pushed `main` and verified files online.
+-   [ ] Captured the repository and commit history screenshots.
+-   [ ] Created and pushed `feature/add-greeting`.
+-   [ ] Opened a pull request into `main`.
+-   [ ] Captured the open pull request screenshot.
+
+## Conclusion
+
+This project demonstrates the basic software development workflow:
+organizing a Python project, writing reusable functions, testing program
+output, tracking changes with Git, publishing code to GitHub, and
+developing a new feature using a separate branch and pull request.
+
+Remember to submit your actual screenshots alongside your written
+worksheet. The sample outputs in this guide are examples; they do not
+replace screenshots of your own terminal and GitHub repository.
